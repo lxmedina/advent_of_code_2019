@@ -7,6 +7,13 @@ let inline (==) (expected: ^a) (actual: ^a) = Assert.Equal< ^a> (expected, actua
 
 let inline private (?->) (args, result) solver = result == solver (input [args])
 
+
+[<Theory>]
+[<InlineData("d01a", "d01", 3256599)>]
+let solution day data result =
+    result == problems.[day] (input ["-f"; "data/" + data])
+
+
 [<Theory>]
 [<InlineData("12", 2)>]
 [<InlineData("14", 2)>]
