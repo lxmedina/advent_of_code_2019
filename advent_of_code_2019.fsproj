@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="d01.fs" />
+    <Compile Include="repo.fs" />
+    <Compile Include="tests.fs" />
     <Compile Include="program.fs" />
   </ItemGroup>
 
@@ -20,4 +23,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="./data/*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+  </ItemGroup>
+  
 </Project>
