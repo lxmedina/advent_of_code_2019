@@ -10,6 +10,7 @@ let (~%) f = sprintf "%A" << f
 let problems = Map<string, string seq -> _> [
     "d01a", % D01.fuelReqs
     "d01b", % D01.fuelReqsEx
+    "d02a", % D02.intcodeProgram1202
 ]
 
 
@@ -22,5 +23,6 @@ let (|Problem|_|) =
 
 let input = function
     | "-f" :: [path] -> File.ReadLines path
+    | "-c" :: [path] -> File.ReadAllText path |> String.split [","]
     | [x] when x.Length > 0 && x.[0] = '\n' -> x.[1..] |> String.split ["\n"]
     | xs -> (intercalate " " xs) |> String.split [" "; ","]

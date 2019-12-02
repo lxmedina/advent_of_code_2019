@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Include="d01.fs" />
+    <Compile Include="d02.fs" />
     <Compile Include="repo.fs" />
     <Compile Include="tests.fs" />
     <Compile Include="program.fs" />
