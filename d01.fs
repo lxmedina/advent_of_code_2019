@@ -10,9 +10,8 @@ let fuelReqs: string seq -> int =
     >> sum
 
 let fuelReqEx =
-    fun x ->
-        let y = fuelReq x
-        if y < 0 then None else Some(y, y)
+    fuelReq
+    >> fun x -> if x < 0 then None else Some (x, x)
     |> Seq.unfold
 
 let fuelReqsEx: string seq -> int =
