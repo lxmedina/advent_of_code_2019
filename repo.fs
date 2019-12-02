@@ -9,6 +9,7 @@ let (~%) f = sprintf "%A" << f
 
 let problems = Map<string, string seq -> _> [
     "d01a", % D01.fuelReqs
+    "d01b", % D01.fuelReqsEx
 ]
 
 
