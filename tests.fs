@@ -17,6 +17,7 @@ let inline (?->) (args, result) solver = result == solver (input [args])
 [<InlineData("d02b", "-c", "d02", 5936)>]
 [<InlineData("d02c", "-c", "d02", 1202)>] // d02 inverse
 [<InlineData("d03a", "-f", "d03", 308)>]
+[<InlineData("d03b", "-f", "d03", 12934)>]
 let solution day fmt data result =
     result == problems.[day] (input [fmt; "data/" + data])
 
@@ -60,3 +61,11 @@ let ``d02b - int-code tuning`` source output input =
 [<InlineData("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51", "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7", 135)>]
 let ``d03a - closest intersection`` x0 x1 y =
     ("\n" + x0 + "\n" + x1, y) ?-> D03.closestIntersection
+
+
+[<Theory>]
+[<InlineData("R8,U5,L5,D3", "U7,R6,D4,L4", 30)>]
+[<InlineData("R75,D30,R83,U83,L12,D49,R71,U7,L72", "U62,R66,U55,R34,D71,R55,D58,R83", 610)>]
+[<InlineData("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51", "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7", 410)>]
+let ``d03b - shortest intersection`` x0 x1 y =
+    ("\n" + x0 + "\n" + x1, y) ?-> D03.shortestIntersection

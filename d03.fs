@@ -33,8 +33,22 @@ let closestCrossing (p0, p1) =
     |> Set.map radius
     |> Set.minElement
 
-let closestIntersection: string seq -> int = 
+let pathlength paths intersection =
+    paths |> map (findIndex ((=) intersection)) |> sum
+
+let shortestCrossing (p0, p1) = 
+    let path0 = renderPath p0 |> rev
+    let path1 = renderPath p1 |> rev
+    intersect path0 path1
+    |> Set.map (pathlength [path0; path1])
+    |> Set.minElement
+
+let run f = 
     Seq.toList
     >> function
-    | [p0; p1] -> closestCrossing (p0, p1)
+    | [p0; p1] -> f (p0, p1)
     | xs -> failwithf "invalid input: %A" xs
+
+let closestIntersection: string seq -> int = run closestCrossing
+
+let shortestIntersection: string seq -> int = run shortestCrossing
