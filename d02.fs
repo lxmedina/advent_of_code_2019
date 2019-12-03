@@ -20,37 +20,37 @@ let inline write (xs: 'a list) (Addr i, x: 'a) =
 let inline compute op (Addr i0, Addr i1, Addr iO) src =
     write src (Addr iO, op src.[i0] src.[i1])
 
-let rec eval (Addr i) (src: int list) =
+let rec eval strict (Addr i) (src: int list) =
     match src.[i..] with
     | OpCode (Bin op)::i0::i1::iO::_ ->
         src
         |> compute op (Addr i0, Addr i1, Addr iO)
-        |> eval (Addr (i + 4))
+        |> eval strict (Addr (i + 4))
     | OpCode End::_ -> src
-    | x::_ -> failwithf "invalid int-code %d at index %d" x i
-    | [] -> failwith "unterminated int-code program" 
+    | x::_ -> if strict then failwithf "invalid int-code %d at index %d" x i else []
+    | [] -> if strict then failwith "unterminated int-code program" else []
 
-let exec = eval (Addr 0)
+let exec strict = eval strict (Addr 0)
 
 let parse: string seq -> int list = choose tryParse >> toList
 
 let patch program (inputs: (Addr * 'a) seq) = fold write program inputs
 
-let run program = patch program >> exec >> head
+let run strict program = patch program >> exec strict >> tryHead
 
-let intcodeProg: string seq -> int list = parse >> exec
+let intcodeProg: string seq -> int list = parse >> exec true
 
 let input (noun, verb) = seq {
     yield (Addr 1, noun)
     yield (Addr 2, verb) }
 
-let intcode source pair = run (parse source) (input pair) 
+let intcode strict source pair = run strict (parse source) (input pair)
 
-let intcode1202 source = intcode source (12, 02)
+let intcode1202 source = intcode true source (12, 02) |> Option.get
 
 let tune output source =
     uncurry Seq.allPairs
-    >> map (fun pair -> pair, intcode source pair)
+    >> map (fun pair -> pair, intcode false source pair)
     >> skipWhile (snd >> (<>) output)
     >> head
     >> fst

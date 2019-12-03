@@ -46,5 +46,4 @@ let ``d02a - int-code program`` x y =
 [<InlineData("1,99,99,0,99", 2, 0)>]
 [<InlineData("1,99,99,4,99,5,6,0,99", 101, 30)>]
 let ``d02b - int-code tuning`` source output result =
-    (source, result) ?-> D02.tune99 output
-
+    (source, result) ?-> D02.tune99 (Some output)

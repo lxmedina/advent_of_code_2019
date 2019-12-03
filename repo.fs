@@ -11,7 +11,7 @@ let problems = Map<string, string seq -> _> [
     "d01a", % D01.fuelReqs
     "d01b", % D01.fuelReqsEx
     "d02a", % D02.intcode1202
-    "d02b", % D02.tune99 19690720
+    "d02b", % D02.tune99 (Some 19690720)
 ]
 
 
