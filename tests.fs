@@ -14,6 +14,7 @@ let inline (?->) (args, result) solver = result == solver (input [args])
 [<InlineData("d01a", "-f", "d01", 3256599)>]
 [<InlineData("d01b", "-f", "d01", 4882038)>]
 [<InlineData("d02a", "-c", "d02", 4462686)>]
+[<InlineData("d02b", "-c", "d02", 5936)>]
 [<InlineData("d02c", "-c", "d02", 1202)>] // d02 inverse
 let solution day fmt data result =
     result == problems.[day] (input [fmt; "data/" + data])
