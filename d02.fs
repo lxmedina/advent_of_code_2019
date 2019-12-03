@@ -4,8 +4,6 @@ open FSharpPlus
 
 type Addr = Addr of int
 
-type Diff<'a> = (Addr * 'a) seq
-
 type Op<'a> =
     | Bin of ('a -> 'a -> 'a)
     | End
@@ -18,8 +16,6 @@ let (|OpCode|_|) = function
 
 let inline write (xs: 'a list) (Addr i, x: 'a) =
     xs.[0..i-1] @ [x] @ xs.[i+1..]
-
-let inline patch<'a> (diff: Diff<'a>) src = fold write src diff
 
 let inline compute op (Addr i0, Addr i1, Addr iO) src =
     write src (Addr iO, op src.[i0] src.[i1])
@@ -38,18 +34,28 @@ let exec = eval (Addr 0)
 
 let parse: string seq -> int list = choose tryParse >> toList
 
-let intcodeProgram: string seq -> int list = parse >> exec
+let patch program (inputs: (Addr * 'a) seq) = fold write program inputs
 
-let intcodeProgram1202: string seq -> int =
-    parse
-    >> patch [(Addr 1, 12); (Addr 2, 2)]
-    >> exec
+let run program = patch program >> exec >> head
+
+let intcodeProg: string seq -> int list = parse >> exec
+
+let input (noun, verb) = seq {
+    yield (Addr 1, noun)
+    yield (Addr 2, verb) }
+
+let intcode source pair = run (parse source) (input pair) 
+
+let intcode1202 source = intcode source (12, 02)
+
+let tune output source =
+    uncurry Seq.allPairs
+    >> map (fun pair -> pair, intcode source pair)
+    >> skipWhile (snd >> (<>) output)
     >> head
+    >> fst
 
-// let tune (diffs: Diff seq) goal src =
-//     diffs
-//     |> skipWhile (fun x -> intcodeHead x src <> goal)
-//     |> tryHead
-
-// let tune99 idxs goal src =
-//     Seq.un
+let tune99 output source =
+    (seq {0 .. 99}, seq {0 .. 99})
+    |> tune output source
+    |> fun (x, y) -> 100 * x + y

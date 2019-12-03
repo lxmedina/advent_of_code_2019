@@ -40,5 +40,11 @@ let ``d01b - fuel requirements extended`` x y = (x, y) ?-> D01.fuelReqsEx
 [<InlineData("2,4,4,5,99,0", "2,4,4,5,99,9801")>]
 [<InlineData("1,1,1,4,99,5,6,0,99", "30,1,1,4,2,5,6,0,99")>]
 let ``d02a - int-code program`` x y =
-    (x, y) ?-> (D02.intcodeProgram >> map string >> intercalate ",")
+    (x, y) ?-> (D02.intcodeProg >> map string >> intercalate ",")
+
+[<Theory>]
+[<InlineData("1,99,99,0,99", 2, 0)>]
+[<InlineData("1,99,99,4,99,5,6,0,99", 101, 30)>]
+let ``d02b - int-code tuning`` source output result =
+    (source, result) ?-> D02.tune99 output
 
