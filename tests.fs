@@ -14,6 +14,7 @@ let inline (?->) (args, result) solver = result == solver (input [args])
 [<InlineData("d01a", "-f", "d01", 3256599)>]
 [<InlineData("d01b", "-f", "d01", 4882038)>]
 [<InlineData("d02a", "-c", "d02", 4462686)>]
+[<InlineData("d02c", "-c", "d02", 1202)>] // d02 inverse
 let solution day fmt data result =
     result == problems.[day] (input [fmt; "data/" + data])
 
@@ -44,6 +45,7 @@ let ``d02a - int-code program`` x y =
 
 [<Theory>]
 [<InlineData("1,99,99,0,99", 2, 0)>]
-[<InlineData("1,99,99,4,99,5,6,0,99", 101, 30)>]
-let ``d02b - int-code tuning`` source output result =
-    (source, result) ?-> D02.tune99 (Some output)
+[<InlineData("2,99,99,0,99,7", 49, 505)>]
+[<InlineData("1,99,99,4,99,5,6,0,99", 30, 0)>]
+let ``d02b - int-code tuning`` source output input =
+    (source, input) ?-> D02.tune99 (Some output)

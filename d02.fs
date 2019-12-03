@@ -20,15 +20,23 @@ let inline write (xs: 'a list) (Addr i, x: 'a) =
 let inline compute op (Addr i0, Addr i1, Addr iO) src =
     write src (Addr iO, op src.[i0] src.[i1])
 
+let inline checkIdx (xs: 'a list) i = i >= 0 && i < xs.Length
+
+let inline validArgs xs = Seq.forall (checkIdx xs)
+
 let rec eval strict (Addr i) (src: int list) =
+    let throw err = if strict then failwith err else []
     match src.[i..] with
     | OpCode (Bin op)::i0::i1::iO::_ ->
-        src
-        |> compute op (Addr i0, Addr i1, Addr iO)
-        |> eval strict (Addr (i + 4))
+        if validArgs src [i0; i1; i0] then
+            src
+            |> compute op (Addr i0, Addr i1, Addr iO)
+            |> eval strict (Addr (i + 4))
+        else
+            throw "index out of range"
     | OpCode End::_ -> src
-    | x::_ -> if strict then failwithf "invalid int-code %d at index %d" x i else []
-    | [] -> if strict then failwith "unterminated int-code program" else []
+    | x::_ -> throw (sprintf "invalid int-code %d at index %d" x i)
+    | [] -> throw "unterminated int-code program"
 
 let exec strict = eval strict (Addr 0)
 
