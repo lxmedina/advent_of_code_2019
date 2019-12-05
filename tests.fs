@@ -11,15 +11,16 @@ let inline (?->) (args, result) solver = result == solver (input [args])
 
 
 [<Theory>]
-[<InlineData("d01a", "-f", "d01", 3256599)>]
-[<InlineData("d01b", "-f", "d01", 4882038)>]
-[<InlineData("d02a", "-c", "d02", 4462686)>]
-[<InlineData("d02b", "-c", "d02", 5936)>]
-[<InlineData("d02c", "-c", "d02", 1202)>] // d02 inverse
-[<InlineData("d03a", "-f", "d03", 308)>]
-[<InlineData("d03b", "-f", "d03", 12934)>]
+[<InlineData("d01a", "-f", "data/d01", 3256599)>]
+[<InlineData("d01b", "-f", "data/d01", 4882038)>]
+[<InlineData("d02a", "-c", "data/d02", 4462686)>]
+[<InlineData("d02b", "-c", "data/d02", 5936)>]
+[<InlineData("d02c", "-c", "data/d02", 1202)>] // d02 inverse
+[<InlineData("d03a", "-f", "data/d03", 308)>]
+[<InlineData("d03b", "-f", "data/d03", 12934)>]
+[<InlineData("d04a", "264360", "746325", 945)>]
 let solution day fmt data result =
-    result == problems.[day] (input [fmt; "data/" + data])
+    result == problems.[day] (input [fmt; data])
 
 
 [<Theory>]
@@ -69,3 +70,14 @@ let ``d03a - closest intersection`` x0 x1 y =
 [<InlineData("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51", "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7", 410)>]
 let ``d03b - shortest intersection`` x0 x1 y =
     ("\n" + x0 + "\n" + x1, y) ?-> D03.shortestIntersection
+
+
+[<Theory>]
+[<InlineData(111111, 111111, 1)>]
+[<InlineData(111111, 111112, 2)>]
+[<InlineData(111120, 111121, 0)>]
+[<InlineData(223450, 223450, 0)>]
+[<InlineData(123789, 123789, 0)>]
+[<InlineData(123788, 123800, 2)>]
+let ``d04a - possible passcodes`` lo hi count =
+    (lo + " " + hi, count) ?-> D04.run
