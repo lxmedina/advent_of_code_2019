@@ -26,6 +26,7 @@ $ dotnet build
     dotnet run -- 1a 12 14
     dotnet run -- 2a 1,0,0,0,2,0,0,0,1,0,0,0,99
     dotnet run -- 3b $'\nR8,U5,L5,D3 \nU7,R6,D4,L4'
+    dotnet run -- 4b 264360 746325
 # tests
     dotnet test [--filter D<dd><A|B>]
     dotnet test --filter d01a

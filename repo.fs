@@ -15,7 +15,8 @@ let problems = Map<string, string seq -> _> [
     "d02c", % D02.tune99 (Some 4462686) // d02 inverse
     "d03a", % D03.closestIntersection
     "d03b", % D03.shortestIntersection
-    "d04a", % D04.run
+    "d04a", % D04.run D04.rulesA
+    "d04b", % D04.run D04.rulesB
 ]
 
 

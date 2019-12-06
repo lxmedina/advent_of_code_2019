@@ -19,6 +19,7 @@ let inline (?->) (args, result) solver = result == solver (input [args])
 [<InlineData("d03a", "-f", "data/d03", 308)>]
 [<InlineData("d03b", "-f", "data/d03", 12934)>]
 [<InlineData("d04a", "264360", "746325", 945)>]
+[<InlineData("d04b", "264360", "746325", 617)>]
 let solution day fmt data result =
     result == problems.[day] (input [fmt; data])
 
@@ -79,5 +80,15 @@ let ``d03b - shortest intersection`` x0 x1 y =
 [<InlineData(223450, 223450, 0)>]
 [<InlineData(123789, 123789, 0)>]
 [<InlineData(123788, 123800, 2)>]
-let ``d04a - possible passcodes`` lo hi count =
-    (lo + " " + hi, count) ?-> D04.run
+let ``d04a - possible passcodes / dupes`` lo hi count =
+    (lo + " " + hi, count) ?-> D04.run D04.rulesA
+
+
+[<Theory>]
+[<InlineData(112233, 112233, 1)>]
+[<InlineData(123444, 123444, 0)>]
+[<InlineData(111120, 111122, 1)>]
+[<InlineData(123888, 123900, 2)>]
+[<InlineData(100, 200, 16)>]
+let ``d04b - possible passcodes / pairs`` lo hi count =
+    (lo + " " + hi, count) ?-> D04.run D04.rulesB
