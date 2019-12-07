@@ -20,11 +20,34 @@ let push center planet system =
     | Some xs -> Map.add center (planet::xs) system
     | None -> Map.add center [planet] system
 
-let parse src =
+let planets src =
     src
     |> Seq.fold (fun acc x -> 
         match split [")"] x |> toList with
         | [center; planet] -> push center planet acc
         | e -> failwithf "invalid input: %A" e) Map.empty
 
-let run src = (parse >> orbits) src 0 CENTER |> Seq.sum
+let totalOrbits src = (planets >> orbits) src 0 CENTER |> Seq.sum
+
+let links src =
+    src
+    |> Seq.fold(fun acc x ->
+        match split [")"] x |> toList with
+        | [center; planet] -> acc |> Map.add planet center
+        | e -> failwithf "invalid input: %A" e) Map.empty
+
+let rec traverse lnks = function
+    | None -> Seq.empty
+    | Some x -> seq {
+        let center = Map.tryFind x lnks
+        yield center
+        yield! traverse lnks center
+    }
+
+let orbitalTransfers src =
+    let lnks = links src
+    let path = Some >> traverse lnks >> Seq.choose id >> set
+    let you = path "YOU"
+    let san = path "SAN"
+    (Set.union you san) - (Set.intersect you san)
+    |> Set.count

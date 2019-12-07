@@ -23,6 +23,7 @@ let inline (?->) (args, result) solver = result == solver (input [args])
 [<InlineData("d05a", "-c", "data/d05", 15426686)>]
 [<InlineData("d05b", "-c", "data/d05", 11430197)>]
 [<InlineData("d06a", "-f", "data/d06", 253104)>]
+[<InlineData("d06b", "-f", "data/d06", 499)>]
 let solution day fmt data result =
     result == problems.[day] (input [fmt; data])
 
@@ -118,4 +119,9 @@ let ``d05b - intcode program + new ops + param modes`` prog seed result =
 [<Theory>]
 [<InlineData("COM)B B)C C)D D)E E)F B)G G)H D)I E)J J)K K)L", 42)>]
 let ``d06a - total number of orbits`` x y =
-    (x, y) ?-> D06.run
+    (x, y) ?-> D06.totalOrbits
+
+[<Theory>]
+[<InlineData("COM)B B)C C)D D)E E)F B)G G)H D)I E)J J)K K)L K)YOU I)SAN", 4)>]
+let ``d06b - orbital transfers`` x y =
+    (x, y) ?-> D06.orbitalTransfers
