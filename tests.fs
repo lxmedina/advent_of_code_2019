@@ -20,6 +20,7 @@ let inline (?->) (args, result) solver = result == solver (input [args])
 [<InlineData("d03b", "-f", "data/d03", 12934)>]
 [<InlineData("d04a", "264360", "746325", 945)>]
 [<InlineData("d04b", "264360", "746325", 617)>]
+[<InlineData("d05a", "-c", "data/d05", 15426686)>]
 let solution day fmt data result =
     result == problems.[day] (input [fmt; data])
 

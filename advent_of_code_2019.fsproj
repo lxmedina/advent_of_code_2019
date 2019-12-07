@@ -11,6 +11,7 @@
     <Compile Include="d02.fs" />
     <Compile Include="d03.fs" />
     <Compile Include="d04.fs" />
+    <Compile Include="d05.fs" />
     <Compile Include="repo.fs" />
     <Compile Include="tests.fs" />
     <Compile Include="program.fs" />

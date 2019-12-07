@@ -17,6 +17,7 @@ let problems = Map<string, string seq -> _> [
     "d03b", % D03.shortestIntersection
     "d04a", % D04.run D04.rulesA
     "d04b", % D04.run D04.rulesB
+    "d05a", % D05.run
 ]
 
 
