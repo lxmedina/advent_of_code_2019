@@ -114,7 +114,7 @@ let ``d04b - possible passcodes / pairs`` lo hi count =
 [<InlineData("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99", 8, 1000)>]
 [<InlineData("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99", 9, 1001)>]
 let ``d05b - intcode program + new ops + param modes`` prog seed result =
-    (prog, result) ?-> D05.run (D05.Word seed)
+    (prog, result) ?-> D05.run [D05.Word seed]
 
 [<Theory>]
 [<InlineData("COM)B B)C C)D D)E E)F B)G G)H D)I E)J J)K K)L", 42)>]
