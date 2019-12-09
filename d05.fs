@@ -133,11 +133,12 @@ let rec repl env =
         let cmd, nxt = parse env.prog env.nxt
         eval { env with nxt = nxt } cmd |> repl
 
-let run input (src: string seq) =
-    let prog =
-        src
-        |> choose tryParse
-        |> mapi (fun i w -> Addr i, Word w)
-        |> Map.ofSeq
-    let (Word result) = repl { prog = prog; stdin = input; stdout = []; nxt = Addr 0 }
+let load: string seq -> Prog =
+    choose tryParse
+    >> mapi (fun i w -> Addr i, Word w)
+    >> Map.ofSeq
+
+let run input src =
+    let env = { prog = load src; stdin = input; stdout = []; nxt = Addr 0 }
+    let (Word result) = repl env
     result

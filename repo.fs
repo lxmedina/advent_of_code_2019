@@ -21,6 +21,7 @@ let problems = Map<string, string seq -> _> [
     "d05b", % D05.run [D05.Word 5]
     "d06a", % D06.totalOrbits
     "d06b", % D06.orbitalTransfers
+    "d07a", % D07.run'
 ]
 
 

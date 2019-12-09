@@ -24,6 +24,7 @@ let inline (?->) (args, result) solver = result == solver (input [args])
 [<InlineData("d05b", "-c", "data/d05", 11430197)>]
 [<InlineData("d06a", "-f", "data/d06", 253104)>]
 [<InlineData("d06b", "-f", "data/d06", 499)>]
+[<InlineData("d07a", "-c", "data/d07", 255590)>]
 let solution day fmt data result =
     result == problems.[day] (input [fmt; data])
 
@@ -97,6 +98,7 @@ let ``d04a - possible passcodes / dupes`` lo hi count =
 let ``d04b - possible passcodes / pairs`` lo hi count =
     (lo + " " + hi, count) ?-> D04.run D04.rulesB
 
+
 [<Theory>]
 [<InlineData("3,9,8,9,10,9,4,9,99,-1,8", 8, 1)>]
 [<InlineData("3,9,8,9,10,9,4,9,99,-1,8", 9, 0)>]
@@ -116,12 +118,22 @@ let ``d04b - possible passcodes / pairs`` lo hi count =
 let ``d05b - intcode program + new ops + param modes`` prog seed result =
     (prog, result) ?-> D05.run [D05.Word seed]
 
+
 [<Theory>]
 [<InlineData("COM)B B)C C)D D)E E)F B)G G)H D)I E)J J)K K)L", 42)>]
 let ``d06a - total number of orbits`` x y =
     (x, y) ?-> D06.totalOrbits
 
+
 [<Theory>]
 [<InlineData("COM)B B)C C)D D)E E)F B)G G)H D)I E)J J)K K)L K)YOU I)SAN", 4)>]
 let ``d06b - orbital transfers`` x y =
     (x, y) ?-> D06.orbitalTransfers
+
+
+[<Theory>]
+[<InlineData("3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0", 43210, "4,3,2,1,0")>]
+[<InlineData("3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0", 54321, "0,1,2,3,4")>]
+[<InlineData("3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0", 65210, "1,0,4,3,2")>]
+let ``d07a - intcode serial circuit`` prog result seed =
+    (prog, (D05.Word result, seed)) ?-> (D07.run >> fun (r, s) -> r, s |>> string |> intercalate ",")

@@ -36,17 +36,17 @@ let links src =
         | [center; planet] -> acc |> Map.add planet center
         | e -> failwithf "invalid input: %A" e) Map.empty
 
-let rec traverse lnks = function
-    | None -> Seq.empty
-    | Some x -> seq {
-        let center = Map.tryFind x lnks
+let rec traverse lnks from = seq {
+    match Map.tryFind from lnks with
+    | Some center ->
         yield center
         yield! traverse lnks center
-    }
+    | None -> ()
+}
 
 let orbitalTransfers src =
     let lnks = links src
-    let path = Some >> traverse lnks >> Seq.choose id >> set
+    let path = traverse lnks >> set
     let you = path "YOU"
     let san = path "SAN"
     (Set.union you san) - (Set.intersect you san)
