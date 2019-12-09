@@ -23,6 +23,7 @@ let problems = Map<string, string seq -> _> [
     "d06b", % D06.orbitalTransfers
     "d07a", % D07.runA'
     "d07b", % D07.runB'
+    "d08a", % D08.runA (25 * 6)
 ]
 
 

@@ -26,6 +26,7 @@ let inline (?->) (args, result) solver = result == solver (input [args])
 [<InlineData("d06b", "-f", "data/d06", 499)>]
 [<InlineData("d07a", "-c", "data/d07", 255590)>]
 [<InlineData("d07b", "-c", "data/d07", 58285150)>]
+[<InlineData("d08a", "-f", "data/d08", 1965)>]
 let solution day fmt data result =
     result == problems.[day] (input [fmt; data])
 
@@ -145,3 +146,10 @@ let ``d07a - intcode serial circuit`` prog result seed =
 [<InlineData("3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10", 18216, "9,7,8,5,6")>]
 let ``d07b - intcode ring circuit`` prog result seed =
     (prog, (D05.Word result, seed)) ?-> (D07.runB >> fun (r, s) -> r, s |>> string |> intercalate ",")
+
+
+[<Theory>]
+[<InlineData("123456789012", 6, 1)>]
+[<InlineData("003456122012", 6, 6)>]
+let ``d08a - chunk check`` src size result =
+    (src, result) ?-> (D08.runA size)
