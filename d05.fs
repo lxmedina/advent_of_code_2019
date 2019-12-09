@@ -6,7 +6,8 @@ type Word = Word of int with
     static member (+) (Word x, Word y) = Word (x + y)
     static member (*) (Word x, Word y) = Word (x * y)
 
-type Addr = Addr of int
+type Addr = Addr of int with
+    static member (-) (Addr i, n) = Addr (i - n)
 
 type Prog = Map<Addr, Word>
 
@@ -97,41 +98,46 @@ type Env = {
     nxt: Addr
 }
 
-let eval (env: Env) (cmd: Cmd): Env =
+type EvalResult =
+    | Ok of Env
+    | Done of Word
+    | Suspended of Env
+
+let eval (env: Env) (cmd: Cmd): EvalResult =
     let get = getArg env.prog
     let set = setArg env.prog
-    let noop () = env
+    let noop () = Ok env
     match cmd with
-    | Add, [p;q;o] -> { env with prog = set o (get p + get q) }
-    | Mult, [p;q;o] -> { env with prog = set o (get p * get q) }
+    | Add, [p;q;o] -> Ok { env with prog = set o (get p + get q) }
+    | Mult, [p;q;o] -> Ok { env with prog = set o (get p * get q) }
     | Read, [o] ->
         match env.stdin with
-        | x::xs -> { env with prog = set o x; stdin = xs }
-        | [] -> failwith "reading from empty input stream"
-    | Write, [p] -> { env with stdout = get p :: env.stdout }
+        | x::xs -> Ok { env with prog = set o x; stdin = xs }
+        | [] -> Suspended { env with nxt = env.nxt - 2 }
+    | Write, [p] -> Ok { env with stdout = get p :: env.stdout }
     | JumpNonzero, [p;q] ->
         match get p with
         | Word 0 -> noop ()
-        | _ -> { env with nxt = addrOfWord (get q) }
+        | _ -> Ok { env with nxt = addrOfWord (get q) }
     | JumpZero, [p;q] ->
         match get p with
-        | Word 0 -> { env with nxt = addrOfWord (get q) }
+        | Word 0 -> Ok { env with nxt = addrOfWord (get q) }
         | _ -> noop ()
     | LessThan, [p;q;o] ->
         if get p < get q then Word 1 else Word 0
-        |> fun x -> { env with prog = set o x }
+        |> fun x -> Ok { env with prog = set o x }
     | Equals, [p;q;o] ->
         if get p = get q then Word 1 else Word 0
-        |> fun x -> { env with prog = set o x }
-    | Halt, [] -> { env with prog = Map.empty }
+        |> fun x -> Ok { env with prog = set o x }
+    | Halt, [] -> Done (head env.stdout)
     | e -> failwithf "invalid command: %A" e
 
 let rec repl env =
-    if Map.isEmpty env.prog then
-        head env.stdout
-    else
-        let cmd, nxt = parse env.prog env.nxt
-        eval { env with nxt = nxt } cmd |> repl
+    let cmd, nxt = parse env.prog env.nxt
+    match eval { env with nxt = nxt } cmd with
+    | Done result -> result
+    | Ok env' -> repl env'
+    | Suspended _ -> failwith "suspension not supported in repl"
 
 let load: string seq -> Prog =
     choose tryParse
