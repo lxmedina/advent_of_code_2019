@@ -7,9 +7,10 @@ type Word = Word of int with
     static member (*) (Word x, Word y) = Word (x * y)
 
 type Addr = Addr of int with
+    static member (+) (Addr i, Addr j) = Addr (i + j)
     static member (-) (Addr i, n) = Addr (i - n)
 
-type Prog = Map<Addr, Word>
+type Prog = { memspace: Map<Addr, Word>; relbase: Addr }
 
 type Inst =
     | Add
@@ -25,8 +26,21 @@ type Inst =
 type Arg =
     | Ref of Addr
     | Val of Word
+    | Rel of Addr
 
 type Cmd = Inst * Arg list
+
+type Env = {
+    prog: Prog
+    stdin: Word list
+    stdout: Word list
+    nxt: Addr
+}
+
+type EvalResult =
+    | Ok of Env
+    | Done of Word
+    | Suspended of Env
 
 let INSTSZ = 100
 
@@ -61,6 +75,7 @@ let modes (Word n) =
             match x % 10 with
             | 0 -> Ref << Addr
             | 1 -> Val << Word
+            | 2 -> Rel << Addr
             | e -> failwithf "invalid argument mode: %d" e
             ,
             x / 10 ))
@@ -69,10 +84,10 @@ let addrOfWord (Word x) = Addr x
 
 let parse prog addr: Cmd * Addr =
     let (Addr i) = addr
-    match prog |> Map.find addr with
+    match prog.memspace |> Map.find addr with
     | Inst inst as x ->
         let n = arity inst
-        let words = seq {i+1 .. i+n} |>> (Addr >> flip Map.find prog)
+        let words = seq {i+1 .. i+n} |>> (Addr >> flip Map.find prog.memspace)
         let args =
             (words, modes x)
             ||> Seq.map2 (fun (Word w) mode -> mode w)
@@ -82,26 +97,16 @@ let parse prog addr: Cmd * Addr =
         (cmd, nxt)
     | e -> failwithf "invalid input: %A" e 
 
-let getArg prog = function
-    | Ref i -> prog |> Map.find i
+let rec getArg prog = function
+    | Ref i -> prog.memspace |> Map.tryFind i |> Option.defaultValue (Word 0)
     | Val n -> n
+    | Rel j -> Ref (prog.relbase + j) |> getArg prog
 
-let setArg prog arg v =
+let rec setArg prog arg v =
     match arg with
-    | Ref i -> prog |> Map.add i v
+    | Ref i -> { prog with memspace = prog.memspace |> Map.add i v }
+    | Rel j -> Ref (prog.relbase + j) |> flip (setArg prog) v
     | e -> failwithf "invalid write argument: %A" e
-
-type Env = {
-    prog: Prog
-    stdin: Word list
-    stdout: Word list
-    nxt: Addr
-}
-
-type EvalResult =
-    | Ok of Env
-    | Done of Word
-    | Suspended of Env
 
 let eval (env: Env) (cmd: Cmd): EvalResult =
     let get = getArg env.prog
@@ -143,6 +148,7 @@ let load: string seq -> Prog =
     choose tryParse
     >> mapi (fun i w -> Addr i, Word w)
     >> Map.ofSeq
+    >> fun m -> { memspace = m; relbase = Addr 0 }
 
 let run input src =
     let env = { prog = load src; stdin = input; stdout = []; nxt = Addr 0 }
