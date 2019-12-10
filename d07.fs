@@ -35,18 +35,18 @@ let loop (env: Env) seed input =
     compute { env with stdin = [Seq.head seed; input] } ring
 
 let run circuit settings src =
-    let env = { prog = load src; stdin = []; stdout = []; nxt = Addr 0 }
+    let env = { prog = load src; stdin = []; stdout = []; nxt = Addr 0L }
     let seed = Seq.map Word
-    let input = Word 0
+    let input = Word 0L
     settings
     |> permutations
     |> Seq.map (fun xs -> circuit env (seed xs) input, xs)
     |> Seq.maxBy fst
 
-let runA src = run pipeline [0..4] src
+let runA src = run pipeline [0L..4L] src
 
-let runB src = run loop [5..9] src
+let runB src = run loop [5L..9L] src
 
-let runA' src = let (Word output, _) = runA src in output
+let runA' src = let (Word output, _) = runA src in int output
 
-let runB' src = let (Word output, _) = runB src in output
+let runB' src = let (Word output, _) = runB src in int output
