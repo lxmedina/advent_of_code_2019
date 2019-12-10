@@ -25,10 +25,10 @@ let rec compute env ring =
             let ring' = xs @ [{ env' with stdout = [] }]
             compute { x with stdin = x.stdin @ env'.stdout } ring'
         | _ -> failwithf "suspension not supported"
-    | Done result ->
+    | Done stdout ->
         match ring with
-        | [] -> result
-        | x::xs -> compute { x with stdin = x.stdin @ env.stdout } xs
+        | [] -> head stdout
+        | x::xs -> compute { x with stdin = x.stdin @ stdout } xs
 
 let loop (env: Env) seed input =
     let ring = Seq.tail seed |>> (fun x -> { env with stdin = [x] }) |> toList

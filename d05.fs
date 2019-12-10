@@ -21,6 +21,7 @@ type Inst =
     | JumpZero
     | LessThan
     | Equals
+    | RelBase
     | Halt
 
 type Arg =
@@ -39,7 +40,7 @@ type Env = {
 
 type EvalResult =
     | Ok of Env
-    | Done of Word
+    | Done of Word list
     | Suspended of Env
 
 let INSTSZ = 100L
@@ -54,6 +55,7 @@ let (|Inst|_|) (Word x) =
     | 06L -> Some JumpZero
     | 07L -> Some LessThan
     | 08L -> Some Equals
+    | 09L -> Some RelBase
     | 99L -> Some Halt
     |   e -> failwithf "invalid instruction: %d" e
 
@@ -66,6 +68,7 @@ let arity = function
     | JumpZero      -> 2L
     | LessThan      -> 3L
     | Equals        -> 3L
+    | RelBase       -> 1L
     | Halt          -> 0L
 
 let modes (Word n) =
@@ -134,13 +137,16 @@ let eval (env: Env) (cmd: Cmd): EvalResult =
     | Equals, [p;q;o] ->
         if get p = get q then Word 1L else Word 0L
         |> fun x -> Ok { env with prog = set o x }
-    | Halt, [] -> Done (head env.stdout)
+    | RelBase, [j] ->
+        Ok { env with prog = { 
+                    env.prog with relbase = env.prog.relbase + addrOfWord (get j) } }
+    | Halt, [] -> Done env.stdout
     | e -> failwithf "invalid command: %A" e
 
 let rec repl env =
     let cmd, nxt = parse env.prog env.nxt
     match eval { env with nxt = nxt } cmd with
-    | Done result -> result
+    | Done stdout -> head stdout
     | Ok env' -> repl env'
     | Suspended _ -> failwith "suspension not supported in repl"
 

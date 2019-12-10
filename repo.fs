@@ -25,6 +25,7 @@ let problems = Map<string, string seq -> _> [
     "d07b", % D07.runB'
     "d08a", % D08.runA (25 * 6)
     "d08b", % D08.runB 25 6
+    "d09a", % D09.run [D05.Word 1L]
 ]
 
 
