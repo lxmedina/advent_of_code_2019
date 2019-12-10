@@ -37,6 +37,7 @@ let inline (?->) (args, result) solver = result == solver (input [args])
     " ### #### #  #  ##    #  \"")>]
 [<InlineData("d09a", "-c", "data/d09", "\"2775723069\"")>]
 [<InlineData("d09b", "-c", "data/d09", "\"49115\"")>]
+[<InlineData("d10a", "-f", "data/d10", "((26, 28), 267)")>]
 let solution day fmt data result =
     result == problems.[day] (input [fmt; data])
 
@@ -171,3 +172,12 @@ let ``d08a - chunk check`` src size result =
 [<InlineData("104,1125899906842624,99", "1125899906842624")>]
 let ``d09a - intcode + relative mode`` src output =
     (src, output) ?-> (D09.run [])
+
+[<Theory>]
+[<InlineData("data/d10-test1", "((3, 4), 8)")>]
+[<InlineData("data/d10-test2", "((5, 8), 33)")>]
+[<InlineData("data/d10-test3", "((1, 2), 35)")>]
+[<InlineData("data/d10-test4", "((6, 3), 41)")>]
+[<InlineData("data/d10-test5", "((11, 13), 210)")>]
+let ``d10a - asteroids / best location`` file result =
+    result == problems.["d10a"] (input ["-f"; file])
