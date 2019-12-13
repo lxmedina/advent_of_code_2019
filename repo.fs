@@ -29,6 +29,7 @@ let problems = Map<string, string seq -> _> [
     "d09b", % D09.run [D05.Word 2L]
     "d10a", % D10.bestloc
     "d10b", % D10.nthdead [200]
+    "d13a", % D13.runA
 ]
 
 
